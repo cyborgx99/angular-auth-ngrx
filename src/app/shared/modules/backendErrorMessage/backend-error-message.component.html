@@ -1,0 +1,9 @@
+<ul class="error-messages">
+  <li *ngFor="let errorMessage of errorMessages">
+    {{
+      errorMessage
+        ? errorMessage.charAt(0).toUpperCase() + errorMessage.substr(1).toLowerCase()
+        : ''
+    }}
+  </li>
+</ul>
