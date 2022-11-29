@@ -2,8 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { registerAction } from '../../store/auth.actions';
-import { isSubmittingSelector } from '../../store/auth.selectors';
+import { BackendErrorResponseInterface } from 'src/app/shared/types/backend-errors.interface';
+import { routePathKeys } from '../../route-part-keys';
+import { registerAction } from '../../store/actions';
+import { errorSelector, isSubmittingSelector } from '../../store/auth.selectors';
+import { RegisterRequestInterface } from '../../types';
 
 @Component({
   selector: 'nc-register-component',
@@ -13,6 +16,8 @@ import { isSubmittingSelector } from '../../store/auth.selectors';
 export class RegisterComponent implements OnInit {
   form: FormGroup;
   isSubmitting$: Observable<boolean>;
+  backendErrors$: Observable<BackendErrorResponseInterface | null>;
+  routePathKeys = routePathKeys;
 
   constructor(private fb: FormBuilder, private store: Store) {}
 
@@ -23,18 +28,28 @@ export class RegisterComponent implements OnInit {
 
   initializeValues(): void {
     this.isSubmitting$ = this.store.pipe(select(isSubmittingSelector));
+    this.backendErrors$ = this.store.pipe(select(errorSelector));
   }
 
   initializeForm(): void {
     this.form = this.fb.group({
-      name: ['', Validators.compose([Validators.required, Validators.minLength(2)])],
-      lastName: ['', Validators.required],
-      email: ['', Validators.required],
-      password: ['', Validators.required],
+      email: [
+        '',
+        {
+          validators: [Validators.required, Validators.email],
+        },
+      ],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      name: ['', [Validators.required]],
+      lastName: ['', [Validators.required]],
     });
   }
 
   onSubmit(): void {
-    this.store.dispatch(registerAction({ request: this.form.value }));
+    const request: RegisterRequestInterface = {
+      ...this.form.value,
+    };
+
+    this.store.dispatch(registerAction({ request }));
   }
 }

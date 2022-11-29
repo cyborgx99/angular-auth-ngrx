@@ -1,5 +1,4 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { AppStateInterface } from 'src/app/shared/types';
 import { AuthStateInterface } from '../types';
 
 export const authFeatureSelector = createFeatureSelector<AuthStateInterface>('auth');
@@ -7,4 +6,19 @@ export const authFeatureSelector = createFeatureSelector<AuthStateInterface>('au
 export const isSubmittingSelector = createSelector(
   authFeatureSelector,
   (state: AuthStateInterface) => state.isSubmitting,
+);
+
+export const errorSelector = createSelector(
+  authFeatureSelector,
+  (state: AuthStateInterface) => state.error,
+);
+
+export const isLoggedInSelector = createSelector(
+  authFeatureSelector,
+  (state: AuthStateInterface) => Boolean(state.authToken),
+);
+
+export const authTokenSelector = createSelector(
+  authFeatureSelector,
+  (state: AuthStateInterface) => state.authToken,
 );

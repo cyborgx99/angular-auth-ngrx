@@ -4,9 +4,12 @@
       <div class="col md-6 col-xs-12">
         <h1 class="text-xs-center">Sign up</h1>
         <p class="text-xs-center">
-          <a [routerLink]="['/login']"> Have an account? </a>
+          <a [routerLink]="[routePathKeys.login]"> Have an account? </a>
         </p>
-        Backend errors
+        <nc-backend-error-message
+          [error]="backendErrors$ | async"
+          *ngIf="backendErrors$ | async"
+        ></nc-backend-error-message>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
           <fieldset>
             <fieldset class="form-group">
@@ -41,6 +44,7 @@
                 formControlName="password"
               />
             </fieldset>
+
             <button
               class="btn btn-lg btn-primary pull-xs-right"
               type="submit"
